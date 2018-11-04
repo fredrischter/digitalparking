@@ -1,0 +1,27 @@
+
+---
+
+spring:
+  profiles: default
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+app:
+  creditLimit: 10
+  positiveAmountNeededForCredit: 10
+  amountChergedBy15Min: 1
+  
+---
+
+spring:
+  profiles: integration
+  datasource:
+    url: jdbc:h2:mem:integrationdb
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+app:
+  creditLimit: 10
+  positiveAmountNeededForCredit: 10
+  amountChergedBy15Min: 1
