@@ -4,19 +4,26 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.digitalparking.config.DigitalParkingConfiguration;
+import com.digitalparking.dto.StartParking;
+import com.digitalparking.dto.StopParking;
 import com.digitalparking.exception.CreditNotAvailableException;
+import com.digitalparking.exception.ParkingLotNotFoundException;
 import com.digitalparking.exception.ParkingSessionFoundException;
 import com.digitalparking.exception.UserNotFoundException;
 import com.digitalparking.exception.VehicleNotFoundException;
 import com.digitalparking.model.Customer;
+import com.digitalparking.model.ParkingLot;
 import com.digitalparking.model.ParkingSession;
 import com.digitalparking.model.Transaction;
 import com.digitalparking.model.Vehicle;
 import com.digitalparking.repository.CustomerRepository;
+import com.digitalparking.repository.ParkingLotRepository;
 import com.digitalparking.repository.ParkingSessionRepository;
 import com.digitalparking.repository.TransactionRepository;
 import com.digitalparking.repository.VehicleRepository;
@@ -45,6 +52,9 @@ public class ParkingService {
 	ParkingSessionRepository parkingSessionRepository;
 
 	@Autowired
+	ParkingLotRepository parkingLotRepository;
+
+	@Autowired
 	DigitalParkingConfiguration digitalParkingConfiguration;
 
 	@Autowired
@@ -53,11 +63,21 @@ public class ParkingService {
 	@Autowired
 	InvoiceService invoiceService;
 
-	public void startParking(String plate) throws UserNotFoundException, VehicleNotFoundException {
-		Vehicle vehicle = vehicleRepository.findByPlate(plate);
+	public void createAsset(ParkingLot parkingLot) throws UserNotFoundException, VehicleNotFoundException {
+		parkingLotRepository.save(parkingLot);
+	}
+	
+	public void startParking(Integer assetId, StartParking plate) throws UserNotFoundException, VehicleNotFoundException, ParkingLotNotFoundException {
+		Vehicle vehicle = vehicleRepository.findByPlate(plate.getLicensePlateNumber());
 
 		if (vehicle == null) {
 			throw new VehicleNotFoundException();
+		}
+		
+		Optional<ParkingLot> parkingLot = parkingLotRepository.findById(assetId);
+		
+		if (!parkingLot.isPresent()) {
+			throw new ParkingLotNotFoundException();
 		}
 
 		Optional<Customer> customer = customerRepository.findById(vehicle.getCustomerId());
@@ -74,11 +94,17 @@ public class ParkingService {
 
 	}
 
-	public void endParking(String plate) throws CreditNotAvailableException, VehicleNotFoundException, UserNotFoundException, ParkingSessionFoundException {
-		Vehicle vehicle = vehicleRepository.findByPlate(plate);
+	public void endParking(Integer assetId, String licencePlateNumber, @Valid StopParking stopParking) throws VehicleNotFoundException, UserNotFoundException, ParkingSessionFoundException, ParkingLotNotFoundException, CreditNotAvailableException {
+		Vehicle vehicle = vehicleRepository.findByPlate(licencePlateNumber);
 
 		if (vehicle == null) {
 			throw new VehicleNotFoundException();
+		}
+		
+		Optional<ParkingLot> parkingLot = parkingLotRepository.findById(assetId);
+		
+		if (!parkingLot.isPresent()) {
+			throw new ParkingLotNotFoundException();
 		}
 
 		Optional<Customer> customer = customerRepository.findById(vehicle.getCustomerId());
@@ -148,7 +174,7 @@ public class ParkingService {
 		}
 	}
 
-	private boolean hasAlreadyParkedBefore(Integer customerId) {
+	public boolean hasAlreadyParkedBefore(Integer customerId) {
 		return parkingSessionRepository.countByCustomerIdAndEnded(customerId) > 0;
 	}
 

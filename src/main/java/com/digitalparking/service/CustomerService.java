@@ -18,17 +18,10 @@ public class CustomerService {
 	CustomerRepository customerRepository;
 	
 	@Autowired
-	VehicleRepository vehicleRepository;
-	
-	@Autowired
 	TransactionRepository transactionRepository;
 
 	public void create(Customer customer) {
 		customerRepository.save(customer);
-	}
-
-	public void addVehicle(Vehicle vehicle) {
-		vehicleRepository.save(vehicle);
 	}
 
 	public void addMoney(WalletTopUp walletTopUp) {
