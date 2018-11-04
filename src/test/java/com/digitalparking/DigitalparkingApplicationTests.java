@@ -1,4 +1,4 @@
-package com.digitalparking.digitalparking;
+package com.digitalparking;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
