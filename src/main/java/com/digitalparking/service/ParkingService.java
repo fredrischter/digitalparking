@@ -13,6 +13,7 @@ import com.digitalparking.config.DigitalParkingConfiguration;
 import com.digitalparking.dto.StartParking;
 import com.digitalparking.dto.StopParking;
 import com.digitalparking.exception.CreditNotAvailableException;
+import com.digitalparking.exception.InvalidStatusException;
 import com.digitalparking.exception.ParkingLotNotFoundException;
 import com.digitalparking.exception.ParkingSessionFoundException;
 import com.digitalparking.exception.UserNotFoundException;
@@ -94,15 +95,22 @@ public class ParkingService {
 
 	}
 
-	public void endParking(Integer assetId, String licencePlateNumber, @Valid StopParking stopParking) throws VehicleNotFoundException, UserNotFoundException, ParkingSessionFoundException, ParkingLotNotFoundException, CreditNotAvailableException {
+	public void endParking(Integer assetId, String licencePlateNumber, @Valid StopParking stopParking)
+			throws VehicleNotFoundException, UserNotFoundException, ParkingSessionFoundException,
+			ParkingLotNotFoundException, CreditNotAvailableException, InvalidStatusException {
+		
+		if (stopParking == null || stopParking.getStatus().equals("stopped")) {
+			throw new InvalidStatusException();
+		}
+		
 		Vehicle vehicle = vehicleRepository.findByPlate(licencePlateNumber);
 
 		if (vehicle == null) {
 			throw new VehicleNotFoundException();
 		}
-		
+
 		Optional<ParkingLot> parkingLot = parkingLotRepository.findById(assetId);
-		
+
 		if (!parkingLot.isPresent()) {
 			throw new ParkingLotNotFoundException();
 		}
