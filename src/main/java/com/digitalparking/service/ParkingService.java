@@ -32,6 +32,8 @@ import com.digitalparking.repository.VehicleRepository;
 @Service
 public class ParkingService {
 
+	private static final String STOPPED = "stopped";
+
 	private static final String CANNOT_HAVE_MORE_CREDIT_THAN = "Cannot have more credit than ";
 
 	private static final String DON_T_HAVE_NEEDED_POSITIVE_AMOUNT_FOR_GETTING_CREDIT = "Don't have needed positive amount for getting credit.";
@@ -99,7 +101,7 @@ public class ParkingService {
 			throws VehicleNotFoundException, UserNotFoundException, ParkingSessionFoundException,
 			ParkingLotNotFoundException, CreditNotAvailableException, InvalidStatusException {
 		
-		if (stopParking == null || stopParking.getStatus().equals("stopped")) {
+		if (stopParking == null || stopParking.getStatus().equals(STOPPED)) {
 			throw new InvalidStatusException();
 		}
 		
