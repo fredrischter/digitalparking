@@ -40,7 +40,7 @@ public class ParkingService {
 
 	private static final String HAVE_NEVER_PARKED_BEFORE = "Have never parked before.";
 
-	private static final long TIMEMILIS_15_MIN = 1000 * 60 * 15;
+	private static final long TIMEMILIS_15_MIN = 1000l * 60l * 15l;
 
 	@Autowired
 	CustomerRepository customerRepository;
