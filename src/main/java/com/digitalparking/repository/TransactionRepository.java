@@ -7,7 +7,7 @@ import com.digitalparking.model.Transaction;
 
 public interface TransactionRepository extends CrudRepository<Transaction, Integer> {
 
-	@Query("select sum(value) from Transaction where customerId=%1")
+	@Query("select sum(t.value) from Transaction t where customerId=?1")
 	Integer sumByCustomerId(Integer customerId);
 
 }
