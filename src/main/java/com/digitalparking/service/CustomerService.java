@@ -5,11 +5,9 @@ import org.springframework.stereotype.Service;
 
 import com.digitalparking.model.Customer;
 import com.digitalparking.model.Transaction;
-import com.digitalparking.model.Vehicle;
 import com.digitalparking.model.WalletTopUp;
 import com.digitalparking.repository.CustomerRepository;
 import com.digitalparking.repository.TransactionRepository;
-import com.digitalparking.repository.VehicleRepository;
 
 @Service
 public class CustomerService {
