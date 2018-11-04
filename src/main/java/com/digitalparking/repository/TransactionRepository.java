@@ -11,3 +11,4 @@ public interface TransactionRepository extends CrudRepository<Transaction, Integ
 	Integer sumByCustomerId(Integer customerId);
 
 }
+	
