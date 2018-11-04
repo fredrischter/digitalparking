@@ -66,19 +66,20 @@ public class ParkingService {
 	@Autowired
 	InvoiceService invoiceService;
 
-	public void createAsset(ParkingLot parkingLot) throws UserNotFoundException, VehicleNotFoundException {
+	public void createAsset(ParkingLot parkingLot) {
 		parkingLotRepository.save(parkingLot);
 	}
-	
-	public void startParking(Integer assetId, StartParking plate) throws UserNotFoundException, VehicleNotFoundException, ParkingLotNotFoundException {
+
+	public void startParking(Integer assetId, StartParking plate)
+			throws UserNotFoundException, VehicleNotFoundException, ParkingLotNotFoundException {
 		Vehicle vehicle = vehicleRepository.findByPlate(plate.getLicensePlateNumber());
 
 		if (vehicle == null) {
 			throw new VehicleNotFoundException();
 		}
-		
+
 		Optional<ParkingLot> parkingLot = parkingLotRepository.findById(assetId);
-		
+
 		if (!parkingLot.isPresent()) {
 			throw new ParkingLotNotFoundException();
 		}
@@ -89,9 +90,8 @@ public class ParkingService {
 			throw new UserNotFoundException();
 		}
 
-		ParkingSession parkingSession = ParkingSession.builder()
-				.customerId(vehicle.getCustomerId()).vehicleId(vehicle.getId())
-				.start(LocalDateTime.now()).build();
+		ParkingSession parkingSession = ParkingSession.builder().customerId(vehicle.getCustomerId())
+				.vehicleId(vehicle.getId()).start(LocalDateTime.now()).build();
 
 		parkingSessionRepository.save(parkingSession);
 
@@ -122,37 +122,35 @@ public class ParkingService {
 		if (!customer.isPresent()) {
 			throw new UserNotFoundException();
 		}
-		
+
 		ParkingSession parkingSession = parkingSessionRepository.findByVehicleIdAndNotEnded(vehicle.getId());
 
 		if (parkingSession == null) {
 			throw new ParkingSessionFoundException();
 		}
-		
+
 		parkingSession.setEnd(LocalDateTime.now());
-		
+
 		int amountCharged = calculateAmount(parkingSession);
 		parkingSession.setAmountCharged(amountCharged);
-		
+
 		withdraw(customer.get().getId(), amountCharged);
-		
+
 		parkingSessionRepository.save(parkingSession);
-		
+
 		invoiceService.sendInvoice(parkingSession);
 
 	}
 
 	private int calculateAmount(ParkingSession parkingSession) {
-		
-		long passedTime = parkingSession.getEnd().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - parkingSession.getStart().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();		
-		int slots = (int)Math.floor(passedTime/TIMEMILIS_15_MIN);
-		int amountCharged = digitalParkingConfiguration.getAmountChergedBy15Min() * (1 + slots);
-		
-		return amountCharged;
+
+		long passedTime = parkingSession.getEnd().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+				- parkingSession.getStart().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		int slots = (int) Math.floor((double) passedTime / TIMEMILIS_15_MIN);
+		return digitalParkingConfiguration.getAmountChergedBy15Min() * (1 + slots);
 	}
 
-	private void withdraw(Integer customerId, int value)
-			throws CreditNotAvailableException {
+	private void withdraw(Integer customerId, int value) throws CreditNotAvailableException {
 
 		Integer balance = customerService.getBalance(customerId);
 
@@ -160,27 +158,24 @@ public class ParkingService {
 			verifyCreditAvailability(customerId, balance, value);
 		}
 
-		Transaction transaction = Transaction.builder().customerId(customerId)
-				.value(-value).build();
+		Transaction transaction = Transaction.builder().customerId(customerId).value(-value).build();
 
 		transactionRepository.save(transaction);
 	}
 
-	private void verifyCreditAvailability(Integer customerId, Integer balance,
-			Integer value) throws CreditNotAvailableException {
+	private void verifyCreditAvailability(Integer customerId, Integer balance, Integer value)
+			throws CreditNotAvailableException {
 		if (!hasAlreadyParkedBefore(customerId)) {
 			throw new CreditNotAvailableException(HAVE_NEVER_PARKED_BEFORE);
 		}
 
-		if (balance < digitalParkingConfiguration
-				.getPositiveAmountNeededForCredit()) {
-			throw new CreditNotAvailableException(
-					DON_T_HAVE_NEEDED_POSITIVE_AMOUNT_FOR_GETTING_CREDIT);
+		if (balance < digitalParkingConfiguration.getPositiveAmountNeededForCredit()) {
+			throw new CreditNotAvailableException(DON_T_HAVE_NEEDED_POSITIVE_AMOUNT_FOR_GETTING_CREDIT);
 		}
 
 		if (balance - value < digitalParkingConfiguration.getCreditLimit()) {
-			throw new CreditNotAvailableException(CANNOT_HAVE_MORE_CREDIT_THAN
-					+ digitalParkingConfiguration.getCreditLimit());
+			throw new CreditNotAvailableException(
+					CANNOT_HAVE_MORE_CREDIT_THAN + digitalParkingConfiguration.getCreditLimit());
 		}
 	}
 

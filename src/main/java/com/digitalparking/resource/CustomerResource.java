@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.digitalparking.dto.StartParking;
 import com.digitalparking.dto.StopParking;
 import com.digitalparking.exception.CreditNotAvailableException;
+import com.digitalparking.exception.InvalidStatusException;
 import com.digitalparking.exception.ParkingLotNotFoundException;
 import com.digitalparking.exception.ParkingSessionFoundException;
 import com.digitalparking.exception.UserNotFoundException;
@@ -24,7 +25,7 @@ public class CustomerResource {
 	ParkingService parkingService; 
 
 	@PostMapping("/")
-	public void addAsset(@Valid ParkingLot parkingLot) throws UserNotFoundException, VehicleNotFoundException {
+	public void addAsset(@Valid ParkingLot parkingLot) {
 		parkingService.createAsset(parkingLot);
 	}
 
@@ -34,7 +35,7 @@ public class CustomerResource {
 	}
 	
 	@PostMapping("/{asset}/vehicle/$licencePlateNumber/session")
-	public void endParking(@PathParam("asset") Integer assetId, @PathParam("licencePlateNumber") String licencePlateNumber, @Valid StopParking stopParking) throws VehicleNotFoundException, UserNotFoundException, ParkingSessionFoundException, ParkingLotNotFoundException, CreditNotAvailableException {
+	public void endParking(@PathParam("asset") Integer assetId, @PathParam("licencePlateNumber") String licencePlateNumber, @Valid StopParking stopParking) throws VehicleNotFoundException, UserNotFoundException, ParkingSessionFoundException, ParkingLotNotFoundException, CreditNotAvailableException, InvalidStatusException {
 		parkingService.endParking(assetId, licencePlateNumber, stopParking);
 	}
 }
