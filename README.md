@@ -39,3 +39,5 @@ Next implementations would include:
 * Exception handling on the GlobalExceptionHandler for each case of negative response
 * Unit tests
 * Other resources / operations for the next features
+* Swagger documentation
+* Removing the last code smells I've left
