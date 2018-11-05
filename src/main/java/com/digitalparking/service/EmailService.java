@@ -28,11 +28,11 @@ public class EmailService {
 
 	private static final String PARKING_TIME = "Parking time: ";
 
-	private static final String SPAN_CLOSE = "</span>";
+	private static final String PART_CLOSE = "</div>";
 
 	private static final String HTML_CLOSE = "</html>";
 
-	private static final String SPAN = "<span>";
+	private static final String PART = "<div>";
 
 	private static final String HTML = "<html>";
 
@@ -60,9 +60,9 @@ public class EmailService {
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append(HTML);
-		sb.append(SPAN+PARKING_TIME+parkingSession.getStart()+SEPARATOR+parkingSession.getEnd()+SPAN_CLOSE);
-		sb.append(SPAN+VEHICLE2+vehicle.getPlate()+SPAN_CLOSE);
-		sb.append(SPAN+COST+parkingSession.getAmountCharged()+SPAN_CLOSE);
+		sb.append(PART+PARKING_TIME+parkingSession.getStart()+SEPARATOR+parkingSession.getEnd()+PART_CLOSE);
+		sb.append(PART+VEHICLE2+vehicle.getPlate()+PART_CLOSE);
+		sb.append(PART+COST+parkingSession.getAmountCharged()+PART_CLOSE);
 		sb.append(HTML_CLOSE);
 		return sb.toString();
 	}

@@ -12,10 +12,10 @@ public interface ParkingSessionRepository extends CrudRepository<ParkingSession,
 	@Query("select count(1) from ParkingSession p where p.customerId = ?1 and p.end is not null")
 	Integer countByCustomerIdAndEnded(Integer customerId);
 
-	@Query("select p from ParkingSession p where p.vehicleId = ?1 and p.end is not null")
+	@Query("select p from ParkingSession p where p.vehicleId = ?1 and p.end is null")
 	ParkingSession findByVehicleIdAndNotEnded(Integer id);
 
-	@Query("select p from ParkingSession p where p.invoiceSent <> true")
+	@Query("select p from ParkingSession p where p.invoiceSent <> true or p.invoiceSent is null")
 	List<ParkingSession> findNotSent();
 
 }

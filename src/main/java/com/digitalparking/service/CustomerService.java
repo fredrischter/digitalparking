@@ -23,5 +23,10 @@ public class CustomerService {
 	public Integer getBalance(Integer customerId) {
 		return transactionRepository.sumByCustomerId(customerId);
 	}
+	
+	public Integer getBalance(String email) {
+		Customer customer = customerRepository.findByEmail(email);
+		return transactionRepository.sumByCustomerId(customer.getId());
+	}
 
 }

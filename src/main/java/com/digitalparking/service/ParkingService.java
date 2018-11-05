@@ -32,7 +32,7 @@ import com.digitalparking.repository.VehicleRepository;
 @Service
 public class ParkingService {
 
-	private static final String STOPPED = "stopped";
+	public static final String STOPPED = "stopped";
 
 	private static final String CANNOT_HAVE_MORE_CREDIT_THAN = "Cannot have more credit than ";
 
@@ -72,6 +72,11 @@ public class ParkingService {
 
 	public void startParking(Integer assetId, StartParking plate)
 			throws UserNotFoundException, VehicleNotFoundException, ParkingLotNotFoundException {
+		startParking(assetId, plate, LocalDateTime.now());
+	}
+	
+	public void startParking(Integer assetId, StartParking plate, LocalDateTime startTime)
+			throws UserNotFoundException, VehicleNotFoundException, ParkingLotNotFoundException {
 		Vehicle vehicle = vehicleRepository.findByPlate(plate.getLicensePlateNumber());
 
 		if (vehicle == null) {
@@ -91,7 +96,7 @@ public class ParkingService {
 		}
 
 		ParkingSession parkingSession = ParkingSession.builder().customerId(vehicle.getCustomerId())
-				.vehicleId(vehicle.getId()).start(LocalDateTime.now()).build();
+				.vehicleId(vehicle.getId()).start(startTime).build();
 
 		parkingSessionRepository.save(parkingSession);
 
@@ -100,8 +105,14 @@ public class ParkingService {
 	public void endParking(Integer assetId, String licencePlateNumber, @Valid StopParking stopParking)
 			throws VehicleNotFoundException, UserNotFoundException, ParkingSessionFoundException,
 			ParkingLotNotFoundException, CreditNotAvailableException, InvalidStatusException {
+		endParking(assetId, licencePlateNumber, stopParking, LocalDateTime.now());
+	}
+
+	public void endParking(Integer assetId, String licencePlateNumber, @Valid StopParking stopParking, LocalDateTime endTime)
+				throws VehicleNotFoundException, UserNotFoundException, ParkingSessionFoundException,
+				ParkingLotNotFoundException, CreditNotAvailableException, InvalidStatusException {
 		
-		if (stopParking == null || stopParking.getStatus().equals(STOPPED)) {
+		if (stopParking == null || !stopParking.getStatus().equals(STOPPED)) {
 			throw new InvalidStatusException();
 		}
 		
@@ -129,7 +140,7 @@ public class ParkingService {
 			throw new ParkingSessionFoundException();
 		}
 
-		parkingSession.setEnd(LocalDateTime.now());
+		parkingSession.setEnd(endTime);
 
 		int amountCharged = calculateAmount(parkingSession);
 		parkingSession.setAmountCharged(amountCharged);

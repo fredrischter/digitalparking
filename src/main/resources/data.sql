@@ -24,5 +24,12 @@ INSERT INTO Transaction (value, customer_id) values (20, (select id from custome
 INSERT INTO Transaction (value, customer_id) values (30, (select id from customer where email like 'nathew@test.com'));
 INSERT INTO Transaction (value, customer_id) values (40, (select id from customer where email like 'zoe@test.com'));
 
+INSERT INTO Parking_Lot (address, active) values ('Mad Ave 123', true);
+INSERT INTO Parking_Lot (address, active) values ('Wall St 34', true);
+INSERT INTO Parking_Lot (address, active) values ('Strange Neighborhood 999', false);
+INSERT INTO Parking_Lot (address, active) values ('Java Ave 23', true);
+
 INSERT INTO Parking_Session (amount_charged, start, end, customer_id, vehicle_id) values (5, '2018-01-01 10:00:00', '2018-01-01 15:00:00', (select id from customer where email like 'zoe@test.com'), (select id from vehicle where plate='Z333'));
+
+
 
