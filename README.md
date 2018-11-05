@@ -41,3 +41,4 @@ Next implementations would include:
 * Other resources / operations for the next features
 * Swagger documentation
 * Removing the last code smells I've left
+* Implementing a proper HTML template and real email sending feature
