@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.h2.Driver
 app:
   creditLimit: 10
-  positiveAmountNeededForCredit: 10
+  positiveAmountNeededForCredit: 5
   amountChergedBy15Min: 1
   
 ---
@@ -23,5 +23,5 @@ spring:
       ddl-auto: create-drop
 app:
   creditLimit: 10
-  positiveAmountNeededForCredit: 10
+  positiveAmountNeededForCredit: 5
   amountChergedBy15Min: 1
