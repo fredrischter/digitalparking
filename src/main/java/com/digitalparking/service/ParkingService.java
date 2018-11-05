@@ -64,7 +64,7 @@ public class ParkingService {
 	CustomerService customerService;
 
 	@Autowired
-	InvoiceService invoiceService;
+	EmailService emailService;
 
 	public void createAsset(ParkingLot parkingLot) {
 		parkingLotRepository.save(parkingLot);
@@ -138,7 +138,7 @@ public class ParkingService {
 
 		parkingSessionRepository.save(parkingSession);
 
-		invoiceService.sendInvoice(parkingSession);
+		emailService.sendEmail(parkingSession);
 
 	}
 

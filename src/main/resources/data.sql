@@ -23,3 +23,6 @@ INSERT INTO Transaction (value, customer_id) values (10, (select id from custome
 INSERT INTO Transaction (value, customer_id) values (20, (select id from customer where email like 'mary@test.com'));
 INSERT INTO Transaction (value, customer_id) values (30, (select id from customer where email like 'nathew@test.com'));
 INSERT INTO Transaction (value, customer_id) values (40, (select id from customer where email like 'zoe@test.com'));
+
+INSERT INTO Parking_Session (amount_charged, start, end, customer_id, vehicle_id) values (5, '2018-01-01 10:00:00', '2018-01-01 15:00:00', (select id from customer where email like 'zoe@test.com'), (select id from vehicle where plate='Z333'));
+
