@@ -2,8 +2,6 @@ package com.digitalparking.dto;
 
 import javax.validation.constraints.NotNull;
 
-import com.digitalparking.dto.StartParking.StartParkingBuilder;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
