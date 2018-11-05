@@ -13,13 +13,13 @@ import com.digitalparking.exception.CreditNotAvailableException;
 import com.digitalparking.exception.InvalidStatusException;
 import com.digitalparking.exception.ParkingLotNotFoundException;
 import com.digitalparking.exception.ParkingSessionFoundException;
-import com.digitalparking.exception.UserNotFoundException;
+import com.digitalparking.exception.CustomerNotFoundException;
 import com.digitalparking.exception.VehicleNotFoundException;
 import com.digitalparking.model.ParkingLot;
 import com.digitalparking.service.ParkingService;
 
 @RestController("/pms/v1/assets")
-public class CustomerResource {
+public class AssetResource {
 	
 	@Autowired
 	ParkingService parkingService; 
@@ -30,12 +30,12 @@ public class CustomerResource {
 	}
 
 	@PostMapping("/{asset}/sessions")
-	public void startParking(@PathParam("asset") Integer assetId, @Valid StartParking startParking) throws UserNotFoundException, VehicleNotFoundException, ParkingLotNotFoundException {
+	public void startParking(@PathParam("asset") Integer assetId, @Valid StartParking startParking) throws CustomerNotFoundException, VehicleNotFoundException, ParkingLotNotFoundException {
 		parkingService.startParking(assetId, startParking);
 	}
 	
 	@PostMapping("/{asset}/vehicle/$licencePlateNumber/session")
-	public void endParking(@PathParam("asset") Integer assetId, @PathParam("licencePlateNumber") String licencePlateNumber, @Valid StopParking stopParking) throws VehicleNotFoundException, UserNotFoundException, ParkingSessionFoundException, ParkingLotNotFoundException, CreditNotAvailableException, InvalidStatusException {
+	public void endParking(@PathParam("asset") Integer assetId, @PathParam("licencePlateNumber") String licencePlateNumber, @Valid StopParking stopParking) throws VehicleNotFoundException, CustomerNotFoundException, ParkingSessionFoundException, ParkingLotNotFoundException, CreditNotAvailableException, InvalidStatusException {
 		parkingService.endParking(assetId, licencePlateNumber, stopParking);
 	}
 }
