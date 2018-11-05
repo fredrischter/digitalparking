@@ -1,6 +1,7 @@
 package com.digitalparking.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -127,11 +128,12 @@ public class ParkingService {
 			throw new CustomerNotFoundException();
 		}
 
-		ParkingSession parkingSession = parkingSessionRepository.findByVehicleIdAndNotEnded(vehicle.getId());
+		List<ParkingSession> parkingSessions = parkingSessionRepository.findByVehicleIdAndNotEnded(vehicle.getId());
 
-		if (parkingSession == null) {
+		if (parkingSessions == null || parkingSessions.isEmpty()) {
 			throw new ParkingSessionFoundException();
 		}
+		ParkingSession parkingSession = parkingSessions.get(0);
 
 		parkingSession.setEnd(endTime);
 
